@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY main.py .
+COPY bcc_api.py .
 
 # Expose port 5000 (Flask default)
 EXPOSE 5000
