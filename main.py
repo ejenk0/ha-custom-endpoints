@@ -83,7 +83,7 @@ def bcc_bin_day():
     )
 
 
-@app.route("/print_todo", methods=["POST"])
+@app.route("/print-todo", methods=["POST"])
 def print_todo():
     data = request.json
     if not data or not all(key in data for key in ["title", "priority"]):
@@ -104,7 +104,7 @@ def print_todo():
             notes or "",
             "--priority",
             str(priority),
-            "--due_date",
+            "--due",
             due_date or "",
         ],
         check=True,
