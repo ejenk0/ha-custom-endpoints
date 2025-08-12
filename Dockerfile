@@ -19,6 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY main.py .
 COPY bcc_api.py .
 COPY todo_receipts/ todo_receipts/
+COPY mail_listener.py .
 
 # Expose port 5000 (Flask default)
 EXPOSE 5000

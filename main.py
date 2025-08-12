@@ -6,6 +6,7 @@ from bcc_api import (
     waste_collection_week,
     ErrorResponse,
 )
+from mail_listener import start_mail_listener_once
 
 app = Flask(__name__)
 
@@ -113,5 +114,15 @@ def print_todo():
     return jsonify({"message": "Print job started"}), 202
 
 
+@app.route("/today", methods=["GET"])
+def today():
+    # Returns today's date and weekday in Brisbane timezone
+    today_date = datetime.now(BRISBANE_TZ)
+    return jsonify(
+        {"date": today_date.isoformat(), "weekday": today_date.strftime("%A").upper()}
+    )
+
+
 if __name__ == "__main__":
+    start_mail_listener_once()
     app.run(debug=True)
