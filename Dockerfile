@@ -7,12 +7,18 @@ WORKDIR /app
 # Copy requirements first for better Docker layer caching
 COPY requirements.txt .
 
+# Install wkhtmltopdf
+RUN apt-get update && \
+  apt-get install -y wkhtmltopdf && \
+  rm -rf /var/lib/apt/lists/*
+
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY main.py .
 COPY bcc_api.py .
+COPY todo_receipts/ todo_receipts/
 
 # Expose port 5000 (Flask default)
 EXPOSE 5000

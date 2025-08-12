@@ -1,3 +1,4 @@
+import subprocess
 from flask import Flask, jsonify, request
 from datetime import datetime, timedelta, timezone
 from bcc_api import (
@@ -80,6 +81,36 @@ def bcc_bin_day():
             "is_recycling_week": is_recycling_week,
         }
     )
+
+
+@app.route("/print_todo", methods=["POST"])
+def print_todo():
+    data = request.json
+    if not data or not all(key in data for key in ["title", "priority"]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    title = data["title"]
+    notes = data.get("notes")
+    priority = data["priority"]
+    due_date = data.get("due_date")
+
+    subprocess.run(
+        [
+            "python3",
+            "todo_receipts/todo_receipt.py",
+            "--title",
+            title,
+            "--notes",
+            notes or "",
+            "--priority",
+            str(priority),
+            "--due_date",
+            due_date or "",
+        ],
+        check=True,
+    )
+
+    return jsonify({"message": "Print job started"}), 202
 
 
 if __name__ == "__main__":
