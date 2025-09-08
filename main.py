@@ -113,6 +113,29 @@ def print_todo():
 
     return jsonify({"message": "Print job started"}), 202
 
+@app.route("/print-command", methods=["POST"])
+def print_command():
+    data = request.json
+    if not data or not all(key in data for key in ["title", "priority"]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    title = data["title"]
+    priority = data["priority"]
+
+    subprocess.run(
+        [
+            "python3",
+            "todo_receipts/todo_receipt.py",
+            "--command",
+            "--title",
+            title,
+            "--priority",
+            str(priority),
+        ],
+        check=True,
+    )
+
+    return jsonify({"message": "Print job started"}), 202
 
 @app.route("/today", methods=["GET"])
 def today():

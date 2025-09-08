@@ -68,6 +68,7 @@ def build_todo_html(
     notes: str | None = None,
     lightning_count: int = 2,
     due_date_str: str | None = None,
+    is_command: bool = False,
 ) -> str:
     """Build the TODO HTML, conditionally rendering sections for notes and due date.
 
@@ -75,6 +76,7 @@ def build_todo_html(
     :param notes: Optional description (can be None or empty)
     :param lightning_count: Priority level (1-3)
     :param due_date_str: Optional formatted due date string (e.g., 'Aug 20, 2025')
+    :param is_command: Whether this is a command print (no notes/due date)
     :return: HTML string
     """
     try:
@@ -87,25 +89,31 @@ def build_todo_html(
     has_notes = bool(notes and notes.strip())
     has_due = bool(due_date_str and str(due_date_str).strip())
 
+    command_section = (
+        f'<div style="text-align:center;font-weight:350;font-size:24px;line-height:1.2;margin:8px 0 10px;font-style:italic;">This is Ellie\'s command.</div>'
+        if is_command
+        else ""
+    )
+
     divider_top_optional = (
         '<div style="height:0;border-top:4px solid #000;margin:16px 0;"></div>'
-        if (has_notes or has_due)
+        if ((not is_command) and (has_notes or has_due))
         else ""
     )
     divider_between = (
         '<div style="height:0;border-top:4px solid #000;margin:18px 0;"></div>'
-        if (has_notes and has_due)
+        if ((not is_command) and (has_notes and has_due))
         else ""
     )
 
     notes_section = (
         f'<div style="text-align:center;font-size:28px;line-height:1.5;white-space:pre-wrap;">{notes}</div>'
-        if has_notes
+        if (has_notes and not is_command)
         else ""
     )
     due_section = (
         f'<div style="text-align:center;font-size:24px;font-weight:600;">Due: {due_date_str}</div>'
-        if has_due
+        if (has_due and not is_command)
         else ""
     )
 
@@ -119,6 +127,7 @@ def build_todo_html(
       {notes_section}
       {divider_between}
       {due_section}
+      {command_section}
     </div>
   </body>
 </html>
@@ -135,6 +144,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Render/print a TODO as a receipt image"
     )
+    parser.add_argument("--command", action="store_true", help="Print as command (no notes/due)")
     parser.add_argument("--title", type=str, help="Title of the TODO")
     parser.add_argument("--notes", type=str, help="Optional description/notes")
     parser.add_argument(
@@ -183,6 +193,7 @@ if __name__ == "__main__":
         notes=task_notes,
         lightning_count=lightning_count,
         due_date_str=due_date_str,
+        is_command=args.command
     )
 
     img_path = html_to_image(html)
