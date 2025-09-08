@@ -1,5 +1,6 @@
 # Use Python 3.11 slim image as base
-FROM python:3.11-slim
+# We need to pin to bookworm in ordere to get wkhtmltopdf in our apt repo https://packages.debian.org/bookworm/wkhtmltopdf https://tracker.debian.org/news/1612884/wkhtmltopdf-removed-from-testing/
+FROM python:3.11-slim-bookworm
 
 # Set working directory in container
 WORKDIR /app
