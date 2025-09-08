@@ -84,7 +84,7 @@ def build_todo_html(
     except Exception:
         lc = 2
     lc = max(1, min(3, lc))
-    priority_icons = "⚡" * lc
+    priority_icons = ("⚡" if not is_command else "♥️") * lc
 
     has_notes = bool(notes and notes.strip())
     has_due = bool(due_date_str and str(due_date_str).strip())
@@ -119,10 +119,26 @@ def build_todo_html(
 
     return f"""
 <html>
-  <body style="margin:0;padding:0;background:#fff;color:#111;font-family: DejaVu Sans, Arial, sans-serif;">
+<head>
+    <link href='https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400' rel='stylesheet' type='text/css'>
+</head>
+  <body style="margin:0;padding:0;background:#fff;color:#111;font-family:DejaVu Sans, Arial, sans-serif;">
     <div style="width:524px;margin:0 auto;padding:24px 20px 20px;border:6px solid #000;border-radius:8px;">
-      <div style="text-align:center;font-size:96px;letter-spacing:8px;line-height:1;margin-bottom:10px;">{priority_icons}</div>
-      <div style="text-align:center;font-weight:700;font-size:48px;line-height:1.2;margin:8px 0 10px;">{title}</div>
+            <div style="text-align:center;
+                                    font-size:68px;
+                                    letter-spacing:8px;
+                                    line-height:1;
+                                    margin-bottom:12px;
+                                    font-family:'Noto Emoji','Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',DejaVu Sans,Arial,sans-serif;">
+                {priority_icons}
+            </div>
+      <div style="text-align:center;
+                  font-weight:700;
+                  font-size:48px;
+                  line-height:1.2;
+                  margin:12px 0 10px;">
+        {title}
+      </div>
       {divider_top_optional}
       {notes_section}
       {divider_between}
@@ -144,7 +160,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Render/print a TODO as a receipt image"
     )
-    parser.add_argument("--command", action="store_true", help="Print as command (no notes/due)")
+    parser.add_argument(
+        "--command", action="store_true", help="Print as command (no notes/due)"
+    )
     parser.add_argument("--title", type=str, help="Title of the TODO")
     parser.add_argument("--notes", type=str, help="Optional description/notes")
     parser.add_argument(
@@ -193,7 +211,7 @@ if __name__ == "__main__":
         notes=task_notes,
         lightning_count=lightning_count,
         due_date_str=due_date_str,
-        is_command=args.command
+        is_command=args.command,
     )
 
     img_path = html_to_image(html)
